@@ -2,7 +2,8 @@
 
 import { useMemo } from 'react';
 import { format } from 'date-fns';
-import type { TimelineSeries } from '@/app/api/dashboard/timeline/route';
+import type { TimelineSeries } from '@/data/timeline';
+import type { DisplayCurrency } from './page';
 
 export type { TimelineSeries };
 
@@ -22,7 +23,12 @@ const PLOT_W = VIEW_W - PADDING.left - PADDING.right;
 const PLOT_H = VIEW_H - PADDING.top - PADDING.bottom;
 const TICK_COUNT = 5;
 
-function formatInr(value: number): string {
+function formatValue(value: number, currency: DisplayCurrency): string {
+  if (currency === 'USD') {
+    if (value >= 1_000_000) return `$${(value / 1_000_000).toFixed(1)}M`;
+    if (value >= 1_000) return `$${(value / 1_000).toFixed(1)}K`;
+    return `$${value.toFixed(0)}`;
+  }
   if (value >= 1_00_00_000) return `₹${(value / 1_00_00_000).toFixed(1)}Cr`;
   if (value >= 1_00_000) return `₹${(value / 1_00_000).toFixed(1)}L`;
   if (value >= 1_000) return `₹${(value / 1_000).toFixed(1)}K`;
@@ -35,13 +41,16 @@ function formatDate(iso: string): string {
 
 interface Props {
   series: TimelineSeries[];
+  currency: DisplayCurrency;
 }
 
-export default function TimelineChart({ series }: Props) {
+export default function TimelineChart({ series, currency }: Props) {
   const { allDates, plotSeries, yTicks, xLabels } = useMemo(() => {
     if (series.length === 0 || series.every((s) => s.data.length === 0)) {
       return { allDates: [], plotSeries: [], yTicks: [], xLabels: [] };
     }
+
+    const valueField = currency === 'USD' ? 'totalUsd' : 'totalInr';
 
     // Collect all unique dates sorted
     const dateSet = new Set<string>();
@@ -53,8 +62,9 @@ export default function TimelineChart({ series }: Props) {
     let globalMax = -Infinity;
     series.forEach((s) =>
       s.data.forEach((d) => {
-        if (d.totalInr < globalMin) globalMin = d.totalInr;
-        if (d.totalInr > globalMax) globalMax = d.totalInr;
+        const v = d[valueField];
+        if (v < globalMin) globalMin = v;
+        if (v > globalMax) globalMax = v;
       })
     );
     const pad = (globalMax - globalMin) * 0.1 || 1;
@@ -68,20 +78,20 @@ export default function TimelineChart({ series }: Props) {
 
     // Map each series to plot points (sparse series get only their own date indices)
     const plotSeries = series.map((s) => {
-      const lookup = new Map(s.data.map((d) => [d.date, d.totalInr]));
+      const lookup = new Map(s.data.map((d) => [d.date, d[valueField]]));
       const points = allDates
         .map((date, i) => {
           const v = lookup.get(date);
-          return v !== undefined ? { x: toX(i), y: toY(v), date, totalInr: v } : null;
+          return v !== undefined ? { x: toX(i), y: toY(v), date, value: v } : null;
         })
-        .filter(Boolean) as { x: number; y: number; date: string; totalInr: number }[];
+        .filter(Boolean) as { x: number; y: number; date: string; value: number }[];
       return { label: s.label, points };
     });
 
     const yStep = (maxY - minY) / (TICK_COUNT - 1);
     const yTicks = Array.from({ length: TICK_COUNT }, (_, i) => {
       const value = minY + yStep * i;
-      return { value, y: toY(value), label: formatInr(value) };
+      return { value, y: toY(value), label: formatValue(value, currency) };
     });
 
     const labelStep = Math.max(1, Math.floor(allDates.length / 8));
@@ -90,7 +100,7 @@ export default function TimelineChart({ series }: Props) {
       .filter((_, i) => i % labelStep === 0 || i === allDates.length - 1);
 
     return { allDates, plotSeries, yTicks, xLabels, minY, maxY };
-  }, [series]);
+  }, [series, currency]);
 
   if (allDates.length === 0) {
     return (

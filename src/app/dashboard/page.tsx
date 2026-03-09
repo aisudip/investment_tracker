@@ -1,30 +1,35 @@
-import { fetchSeries } from '@/app/api/dashboard/timeline/route';
-import type { GroupBy } from '@/app/api/dashboard/timeline/route';
+import { getTimelineSeries } from '@/data/timeline';
+import type { GroupBy } from '@/data/timeline';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import TimelineChart from './TimelineChart';
 import GroupBySelector from './GroupBySelector';
+import CurrencyToggle from './CurrencyToggle';
+
+export type DisplayCurrency = 'INR' | 'USD';
 
 interface PageProps {
-  searchParams: Promise<{ groupBy?: string }>;
+  searchParams: Promise<{ groupBy?: string; currency?: string }>;
 }
 
 export default async function DashboardPage({ searchParams }: PageProps) {
-  const { groupBy: rawGroupBy } = await searchParams;
+  const { groupBy: rawGroupBy, currency: rawCurrency } = await searchParams;
   const groupBy: GroupBy =
     rawGroupBy === 'accountType' || rawGroupBy === 'currency' || rawGroupBy === 'nrType'
       ? rawGroupBy
       : 'total';
+  const displayCurrency: DisplayCurrency = rawCurrency === 'USD' ? 'USD' : 'INR';
 
-  const series = await fetchSeries(groupBy);
+  const series = await getTimelineSeries(groupBy);
 
   // Summary stats from the "Total" series (first series when groupBy=total,
   // or summed across all series for a given date range otherwise)
   const allPoints = series.flatMap((s) => s.data);
   const datesSorted = [...new Set(allPoints.map((p) => p.date))].sort();
+  const valueField = displayCurrency === 'USD' ? 'totalUsd' : 'totalInr';
   const totalForDate = (date: string) =>
     series.reduce((sum, s) => {
       const pt = s.data.find((d) => d.date === date);
-      return sum + (pt?.totalInr ?? 0);
+      return sum + (pt?.[valueField] ?? 0);
     }, 0);
 
   const latestTotal = datesSorted.length > 0 ? totalForDate(datesSorted.at(-1)!) : 0;
@@ -38,7 +43,7 @@ export default async function DashboardPage({ searchParams }: PageProps) {
       <div className="max-w-5xl mx-auto space-y-8">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">Dashboard</h1>
-          <p className="text-muted-foreground text-sm mt-1">Total investment value over time (INR)</p>
+          <p className="text-muted-foreground text-sm mt-1">Total investment value over time ({displayCurrency})</p>
         </div>
 
         {/* Summary cards */}
@@ -48,7 +53,7 @@ export default async function DashboardPage({ searchParams }: PageProps) {
               <CardTitle className="text-xs text-muted-foreground uppercase tracking-wide font-medium">Current Value</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold">{formatInrDisplay(latestTotal)}</p>
+              <p className="text-2xl font-bold">{formatValueDisplay(latestTotal, displayCurrency)}</p>
             </CardContent>
           </Card>
           <Card>
@@ -75,10 +80,13 @@ export default async function DashboardPage({ searchParams }: PageProps) {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between flex-wrap gap-3">
             <CardTitle className="text-sm font-medium text-muted-foreground">Investment Timeline</CardTitle>
-            <GroupBySelector current={groupBy} />
+            <div className="flex items-center gap-3">
+              <CurrencyToggle current={displayCurrency} />
+              <GroupBySelector current={groupBy} />
+            </div>
           </CardHeader>
           <CardContent>
-            <TimelineChart series={series} />
+            <TimelineChart series={series} currency={displayCurrency} />
           </CardContent>
         </Card>
       </div>
@@ -86,7 +94,12 @@ export default async function DashboardPage({ searchParams }: PageProps) {
   );
 }
 
-function formatInrDisplay(value: number): string {
+function formatValueDisplay(value: number, currency: DisplayCurrency): string {
+  if (currency === 'USD') {
+    if (value >= 1_000_000) return `$${(value / 1_000_000).toFixed(2)}M`;
+    if (value >= 1_000) return `$${(value / 1_000).toFixed(2)}K`;
+    return `$${value.toLocaleString('en-US')}`;
+  }
   if (value >= 1_00_00_000) return `₹${(value / 1_00_00_000).toFixed(2)} Cr`;
   if (value >= 1_00_000) return `₹${(value / 1_00_000).toFixed(2)} L`;
   return `₹${value.toLocaleString('en-IN')}`;

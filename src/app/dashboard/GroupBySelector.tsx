@@ -4,7 +4,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select';
-import type { GroupBy } from '@/app/api/dashboard/timeline/route';
+import type { GroupBy } from '@/data/timeline';
 
 const OPTIONS: { value: GroupBy; label: string }[] = [
   { value: 'total',       label: 'Total' },

@@ -9,6 +9,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 | Task | Read first |
 |---|---|
 | Any UI work (components, pages, layouts) | `docs/ui.md` |
+| Any data fetching work | `docs/data-fetching.md` |
+
 
 Standards in `/docs` take precedence over general conventions. If a doc exists for the area you are working in, follow it exactly — do not deviate without explicit user instruction.
 
