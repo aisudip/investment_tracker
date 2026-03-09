@@ -76,10 +76,19 @@ export const investmentSnapshots = pgTable('investment_snapshots', {
   exchangeRateToUsd: numeric('exchange_rate_to_usd', { precision: 12, scale: 6 }),
   notes: text('notes'),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  // Denormalized from parent investment for efficient filtered/grouped queries.
+  // These are immutable once set — an investment's type, currency, and NR status
+  // do not change, so there is no consistency risk.
+  accountTypeId: integer('account_type_id').notNull().references(() => accountTypes.id),
+  currencyId: integer('currency_id').notNull().references(() => currencies.id),
+  nrType: nrTypeEnum('nr_type').notNull().default('NA'),
 }, (table) => [
   uniqueIndex('snapshots_investment_date_unique_idx').on(table.investmentId, table.snapshotDate),
   index('snapshots_investment_date_idx').on(table.investmentId, table.snapshotDate),
   index('snapshots_date_idx').on(table.snapshotDate),
+  index('snapshots_date_account_type_idx').on(table.snapshotDate, table.accountTypeId),
+  index('snapshots_date_currency_idx').on(table.snapshotDate, table.currencyId),
+  index('snapshots_date_nr_type_idx').on(table.snapshotDate, table.nrType),
 ]);
 
 // ─── Relations ────────────────────────────────────────────────────────────────
@@ -104,4 +113,6 @@ export const investmentsRelations = relations(investments, ({ one, many }) => ({
 
 export const investmentSnapshotsRelations = relations(investmentSnapshots, ({ one }) => ({
   investment: one(investments, { fields: [investmentSnapshots.investmentId], references: [investments.id] }),
+  accountType: one(accountTypes, { fields: [investmentSnapshots.accountTypeId], references: [accountTypes.id] }),
+  currency: one(currencies, { fields: [investmentSnapshots.currencyId], references: [currencies.id] }),
 }));

@@ -6,13 +6,19 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "db:push": "drizzle-kit push",
+    "db:seed": "tsx src/db/seed.ts",
+    "db:seed-snapshots": "tsx src/db/seed-snapshots.ts",
+    "db:seed-all": "tsx src/db/seed-all.ts",
+    "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.39.0",
     "@neondatabase/serverless": "^1.0.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "date-fns": "^4.1.0",
     "dotenv": "^17.3.1",
     "drizzle-orm": "^0.45.1",
     "lucide-react": "^0.577.0",
