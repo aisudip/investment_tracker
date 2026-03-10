@@ -1,4 +1,4 @@
-import { auth } from '@clerk/nextjs/server';
+import { auth } from '@/lib/auth';
 import { db } from '@/db';
 import { investmentSnapshots, investments, accountTypes, currencies } from '@/db/schema';
 import { sql, eq } from 'drizzle-orm';

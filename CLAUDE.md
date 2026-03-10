@@ -10,6 +10,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 |---|---|
 | Any UI work (components, pages, layouts) | `docs/ui.md` |
 | Any data fetching work | `docs/data-fetching.md` |
+| Any auth work (middleware, sessions, sign-in/up) | `docs/auth.md` |
+| Any data mutation work (create, update, delete) | `docs/data-mutations.md` |
 
 
 Standards in `/docs` take precedence over general conventions. If a doc exists for the area you are working in, follow it exactly — do not deviate without explicit user instruction.
