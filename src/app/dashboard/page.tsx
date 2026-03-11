@@ -1,6 +1,8 @@
 import { getTimelineSeries } from '@/data/timeline';
 import type { GroupBy } from '@/data/timeline';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 import TimelineChart from './TimelineChart';
 import GroupBySelector from './GroupBySelector';
 import CurrencyToggle from './CurrencyToggle';
@@ -89,6 +91,12 @@ export default async function DashboardPage({ searchParams }: PageProps) {
             <TimelineChart series={series} currency={displayCurrency} />
           </CardContent>
         </Card>
+
+        <div className="flex justify-center">
+          <Button asChild variant="outline">
+            <Link href="/investments">View Snapshots</Link>
+          </Button>
+        </div>
       </div>
     </main>
   );
