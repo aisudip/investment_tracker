@@ -41,64 +41,64 @@ export default async function DashboardPage({ searchParams }: PageProps) {
   const snapshotDates = datesSorted.length;
 
   return (
-    <main className="min-h-screen bg-background p-6 md:p-10">
-      <div className="max-w-5xl mx-auto space-y-8">
+    <div className="p-4 md:p-6">
+      <div className="max-w-5xl mx-auto space-y-4">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Dashboard</h1>
-          <p className="text-muted-foreground text-sm mt-1">Total investment value over time ({displayCurrency})</p>
+          <h1 className="text-xl font-semibold tracking-tight">Dashboard</h1>
+          <p className="text-muted-foreground text-xs mt-0.5">Total investment value over time ({displayCurrency})</p>
         </div>
 
         {/* Summary cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="grid grid-cols-3 gap-3">
           <Card>
-            <CardHeader className="pb-1">
+            <CardHeader className="pb-0 pt-3 px-4">
               <CardTitle className="text-xs text-muted-foreground uppercase tracking-wide font-medium">Current Value</CardTitle>
             </CardHeader>
-            <CardContent>
-              <p className="text-2xl font-bold">{formatValueDisplay(latestTotal, displayCurrency)}</p>
+            <CardContent className="pt-1 pb-3 px-4">
+              <p className="text-xl font-bold">{formatValueDisplay(latestTotal, displayCurrency)}</p>
             </CardContent>
           </Card>
           <Card>
-            <CardHeader className="pb-1">
+            <CardHeader className="pb-0 pt-3 px-4">
               <CardTitle className="text-xs text-muted-foreground uppercase tracking-wide font-medium">All-time Change</CardTitle>
             </CardHeader>
-            <CardContent>
-              <p className={`text-2xl font-bold ${isPositive ? 'text-chart-2' : 'text-destructive'}`}>
+            <CardContent className="pt-1 pb-3 px-4">
+              <p className={`text-xl font-bold ${isPositive ? 'text-chart-2' : 'text-destructive'}`}>
                 {isPositive ? '+' : ''}{change.toFixed(1)}%
               </p>
             </CardContent>
           </Card>
           <Card>
-            <CardHeader className="pb-1">
+            <CardHeader className="pb-0 pt-3 px-4">
               <CardTitle className="text-xs text-muted-foreground uppercase tracking-wide font-medium">Snapshot Dates</CardTitle>
             </CardHeader>
-            <CardContent>
-              <p className="text-2xl font-bold">{snapshotDates}</p>
+            <CardContent className="pt-1 pb-3 px-4">
+              <p className="text-xl font-bold">{snapshotDates}</p>
             </CardContent>
           </Card>
         </div>
 
         {/* Timeline chart */}
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between flex-wrap gap-3">
+          <CardHeader className="py-3 flex flex-row items-center justify-between flex-wrap gap-3">
             <CardTitle className="text-sm font-medium text-muted-foreground">Investment Timeline</CardTitle>
             <div className="flex items-center gap-3">
               <CurrencyToggle current={displayCurrency} />
               <GroupBySelector current={groupBy} />
             </div>
           </CardHeader>
-          <CardContent>
+          <CardContent className="pb-3">
             <TimelineChart series={series} currency={displayCurrency} />
           </CardContent>
         </Card>
 
         <div className="flex justify-center">
           <Button asChild variant="outline">
-            <Link href="/investments">View Snapshots</Link>
+            <Link href="/dashboard/snapshots">View Snapshots</Link>
           </Button>
         </div>
       </div>
-    </main>
+    </div>
   );
 }
 

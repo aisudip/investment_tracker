@@ -8,6 +8,7 @@ import {
   SignedOut,
   UserButton,
 } from "@clerk/nextjs";
+import Link from "next/link";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -36,17 +37,19 @@ export default function RootLayout({
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
-          <header className="flex items-center justify-between px-6 py-4">
-            <span className="text-lg font-semibold">Investment Tracker</span>
+          <header className="flex items-center justify-between px-6 py-4 border-b border-border bg-secondary">
+            <Link href="/dashboard" className="text-lg font-semibold hover:opacity-80">
+              Investment Tracker
+            </Link>
             <div className="flex items-center gap-4">
               <SignedOut>
                 <SignInButton mode="modal">
-                  <button className="rounded-md border border-gray-400 px-4 py-1.5 text-sm hover:bg-gray-100 dark:border-gray-600 dark:hover:bg-gray-800">
+                  <button className="rounded-md border border-border px-4 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground">
                     Sign in
                   </button>
                 </SignInButton>
                 <SignUpButton mode="modal">
-                  <button className="rounded-md border border-blue-600 bg-blue-600 px-4 py-1.5 text-sm text-white hover:bg-blue-700">
+                  <button className="rounded-md border border-primary bg-primary px-4 py-1.5 text-sm text-primary-foreground hover:bg-primary/90">
                     Sign up
                   </button>
                 </SignUpButton>

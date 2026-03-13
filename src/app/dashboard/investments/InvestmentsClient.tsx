@@ -158,6 +158,13 @@ export function InvestmentsClient({
     else router.refresh();
   }
 
+  async function handleActivate(id: string, name: string) {
+    if (!confirm(`Activate "${name}"?`)) return;
+    const result = await updateInvestmentAction({ id, isActive: true });
+    if ("error" in result) alert(result.error);
+    else router.refresh();
+  }
+
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-3">
@@ -220,12 +227,16 @@ export function InvestmentsClient({
               </TableCell>
               <TableCell className="flex gap-2 justify-end">
                 <Button variant="outline" size="sm" asChild>
-                  <Link href={`/investments/${inv.id}/snapshots`}>Snapshots</Link>
+                  <Link href={`/dashboard/investments/${inv.id}/snapshots`}>Snapshots</Link>
                 </Button>
                 <Button variant="outline" size="sm" onClick={() => openEdit(inv)}>Edit</Button>
-                {inv.isActive && (
+                {inv.isActive ? (
                   <Button variant="destructive" size="sm" onClick={() => handleDeactivate(inv.id, inv.name)}>
                     Deactivate
+                  </Button>
+                ) : (
+                  <Button variant="outline" size="sm" onClick={() => handleActivate(inv.id, inv.name)}>
+                    Activate
                   </Button>
                 )}
               </TableCell>
