@@ -51,29 +51,23 @@ export default async function DashboardPage({ searchParams }: PageProps) {
         {/* Summary cards */}
         <div className="grid grid-cols-3 gap-3">
           <Card>
-            <CardHeader className="pb-0 pt-3 px-4">
-              <CardTitle className="text-xs text-muted-foreground uppercase tracking-wide font-medium">Current Value</CardTitle>
-            </CardHeader>
-            <CardContent className="pt-1 pb-3 px-4">
-              <p className="text-xl font-bold">{formatValueDisplay(latestTotal, displayCurrency)}</p>
+            <CardContent className="flex items-center justify-between px-4 py-2">
+              <p className="text-xs text-muted-foreground uppercase tracking-wide font-medium">Current Value</p>
+              <p className="text-lg font-bold">{formatValueDisplay(latestTotal, displayCurrency)}</p>
             </CardContent>
           </Card>
           <Card>
-            <CardHeader className="pb-0 pt-3 px-4">
-              <CardTitle className="text-xs text-muted-foreground uppercase tracking-wide font-medium">All-time Change</CardTitle>
-            </CardHeader>
-            <CardContent className="pt-1 pb-3 px-4">
-              <p className={`text-xl font-bold ${isPositive ? 'text-chart-2' : 'text-destructive'}`}>
+            <CardContent className="flex items-center justify-between px-4 py-2">
+              <p className="text-xs text-muted-foreground uppercase tracking-wide font-medium">All-time Change</p>
+              <p className={`text-lg font-bold ${isPositive ? 'text-chart-2' : 'text-destructive'}`}>
                 {isPositive ? '+' : ''}{change.toFixed(1)}%
               </p>
             </CardContent>
           </Card>
           <Card>
-            <CardHeader className="pb-0 pt-3 px-4">
-              <CardTitle className="text-xs text-muted-foreground uppercase tracking-wide font-medium">Snapshot Dates</CardTitle>
-            </CardHeader>
-            <CardContent className="pt-1 pb-3 px-4">
-              <p className="text-xl font-bold">{snapshotDates}</p>
+            <CardContent className="flex items-center justify-between px-4 py-2">
+              <p className="text-xs text-muted-foreground uppercase tracking-wide font-medium">Snapshot Dates</p>
+              <p className="text-lg font-bold">{snapshotDates}</p>
             </CardContent>
           </Card>
         </div>
