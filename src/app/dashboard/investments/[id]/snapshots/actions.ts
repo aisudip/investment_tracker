@@ -21,12 +21,7 @@ const deleteSnapshotSchema = z.object({
 const csvRowSchema = z.object({
   investmentNameOrId: z.string().min(1),
   snapshotDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Date must be YYYY-MM-DD"),
-  valueInCurrency: z.string().min(1),
-  valueInInr: z.string().optional(),
-  valueInUsd: z.string().optional(),
-  exchangeRateToInr: z.string().optional(),
-  exchangeRateToUsd: z.string().optional(),
-  notes: z.string().optional(),
+  valueInHomeCurrency: z.string().min(1, "Value is required"),
 });
 
 export async function upsertSnapshotAction(params: {

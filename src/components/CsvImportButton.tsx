@@ -55,6 +55,8 @@ export function CsvImportButton({
     Papa.parse<Record<string, string>>(file, {
       header: true,
       skipEmptyLines: true,
+      transformHeader: (h) => h.trim(),
+      transform: (value) => value.trim(),
       complete(results) {
         const cols = results.meta.fields ?? [];
         const missing = requiredColumns.filter((r) => !cols.includes(r));

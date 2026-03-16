@@ -60,12 +60,7 @@ const empty: FormState = {
 const CSV_COLUMNS = [
   "investment_name_or_id",
   "snapshot_date",
-  "value_in_currency",
-  "value_in_inr",
-  "value_in_usd",
-  "exchange_rate_to_inr",
-  "exchange_rate_to_usd",
-  "notes",
+  "value_in_home_currency",
 ];
 
 export function SnapshotsClient({
@@ -145,18 +140,13 @@ export function SnapshotsClient({
         <Button onClick={openCreate}>Add Snapshot</Button>
         <CsvImportButton
           label="Import Snapshots CSV"
-          requiredColumns={["investment_name_or_id", "snapshot_date", "value_in_currency"]}
+          requiredColumns={["investment_name_or_id", "snapshot_date", "value_in_home_currency"]}
           onImport={(rows) =>
             importSnapshotsAction(
               rows.map((r) => ({
                 investmentNameOrId: r.investment_name_or_id,
                 snapshotDate: r.snapshot_date,
-                valueInCurrency: r.value_in_currency,
-                valueInInr: r.value_in_inr,
-                valueInUsd: r.value_in_usd,
-                exchangeRateToInr: r.exchange_rate_to_inr,
-                exchangeRateToUsd: r.exchange_rate_to_usd,
-                notes: r.notes,
+                valueInHomeCurrency: r.value_in_home_currency,
               }))
             )
           }
